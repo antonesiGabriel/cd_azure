@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+
+  demo-db:
+    image: testcutorialcontainerregistry.azurecr.io/db
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      demo-net:
+         ipv4_address: 172.22.0.2
+  demo-be:
+    image: testcutorialcontainerregistry.azurecr.io/antonesigabrielspringdemo
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_IP=172.22.0.2
+      #- DB_IP=localhost
+      - DB_PORT=5432
+      - DB_USER=docker
+      - DB_PASSWORD=docker
+      - DB_DBNAME=city-db
+
+    networks:
+      demo-net:
+         ipv4_address: 172.22.0.4
+
+networks:
+  demo-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.22.0.0/24
+          gateway: 172.22.0.1
